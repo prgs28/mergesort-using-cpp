@@ -1,0 +1,93 @@
+#include<iostream>
+using namespace std;
+#include<chrono>		//to calculate time taken by the code
+
+void merge(int arr[], int left, int med, int right);			//merge function to 
+void m_sort(int arr[], int left, int right);
+
+
+int main()
+{
+	int n,i;
+	int arr[100];
+	cout << "\nhow many elements?: ";
+	cin >> n;
+	if (n <= 1)
+	{
+		cout << "ERROR!! \nthe array must contain atleast 2 values";
+		exit(0);
+	}
+
+	cout << "\nenter elements: ";
+	for (i = 0; i < n; i++)
+	{
+		cin >> arr[i];
+	}
+	auto begin = std::chrono::high_resolution_clock::now();
+	m_sort(arr, 0, n - 1);
+	cout << "\nthe sorted array is:\n";
+	for (i = 0; i < n; i++)
+	{
+		cout << arr[i] << endl;
+	}
+	auto end = std::chrono::high_resolution_clock::now();			//clock is stopped and time is noted in end
+	std::chrono::duration<double> elapsed = end - begin;			//substracting end from beg to get the time taken
+	cout << "\ntime taken by code: " << elapsed.count() << "ms";
+}
+
+void m_sort(int arr[], int left, int right)								//the mergesort function
+{
+	if (right > left)													
+	{
+		int mid = left + (right - left) / 2;							//calculating mid to split the array into 2 
+		m_sort(arr, left, mid);											//calling m_sort for 1st part
+		m_sort(arr, mid + 1, right);									//calling m_sort for 2nd part
+
+		merge(arr, left, mid, right);									//finally merging the array and creating an ordered one
+	}
+}
+
+void merge(int arr[], int left, int med, int right)
+{
+	int numLeft = med - left + 1;					//to get number of elements in left of divided array
+	int numRight = right - med;						//to get number of elements in right of divided array
+	int* l = NULL;									//dynamic arrays l and r to store left and right sub-arrays(lines 9-20)
+	int* r = NULL;
+	l = new int[numLeft];
+	r = new int[numRight];
+
+
+	for (int i = 0; i < numLeft; i++)
+		l[i] = arr[left + i];
+	for (int j = 0; j < numRight; j++)
+		r[j] = arr[med + 1 + j];
+	int i = 0, j = 0, k = 0;
+	k = left;
+
+	while (i < numLeft && j < numRight)					//checking if the iteration is less than no. of ele in left and that of right
+	{
+		if (l[i] <= r[j])								//then we check if the element at index of l[i] is less than that of r[j]  
+		{
+			arr[k] = l[i];								//if so, assign l[i] to orderd array arr[]
+			i++;
+		}
+		else
+		{
+			arr[k] = r[j];								//else assign r[j] to arr[]
+			j++;
+		}
+		k++;
+	}
+
+	while (i < numLeft)									//this is done when one of the condition is true
+	{
+		arr[k] = l[i];
+		i++; k++;
+	}
+	while (j < numRight)
+	{
+		arr[k] = r[j];
+		j++; k++;
+	}
+}
+
